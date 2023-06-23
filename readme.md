@@ -49,6 +49,7 @@ Before running this application, ensure that you have the following prerequisite
 
    The application will prompt you to authorize it by visiting a URL in your web browser. Follow the authorization flow and enter the generated authorization code in the terminal from browser url bar.
    Below is sample URL, where YOUR_CODE is the token you need to put in the terminal.
+   
    http://localhost:3000/callback?code={YOUR_CODE}&scope=https://www.googleapis.com/auth/gmail.modify
 
 5. **Usage**
