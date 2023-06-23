@@ -53,9 +53,11 @@ Before running this application, ensure that you have the following prerequisite
 
 5. **Usage**
 
-   The application will check your Gmail account for new unread emails in an interval defined in the cron-job on app.js, by default it is set to 5 minutes. When a new email is received, it will automatically send a predefined reply to the sender and mark the email as read.
+   The application will check your Gmail account for new unread emails in an interval defined in the cron-job in app.js, by default it is set to 5 minutes. When a new email is received, it will automatically send a predefined reply to the sender and mark the email as read.
 
-   You can customize the reply message and other settings by modifying the code in the `app.js` file.
+   You can customize the reply message and other settings like number of emails you want to reply (by default it is set to 5, so it will auto-reply the 5 latest unread emails) by modifying the code in the `app.js` file.
+
+
 
 ## License
 

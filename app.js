@@ -44,7 +44,7 @@ async function listAndReplyToEmails() {
         const res = await gmail.users.messages.list({
             userId: 'me',
             labelIds: ['UNREAD', 'INBOX'],
-            maxResults: 1,
+            maxResults: 5,
         });
 
         const emails = res.data.messages;
