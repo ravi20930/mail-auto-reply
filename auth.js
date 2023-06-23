@@ -44,7 +44,7 @@ exports.loadToken = async () => {
         const token = fs.readFileSync(TOKEN_PATH);
         oAuth2Client.setCredentials(JSON.parse(token));
     } catch (err) {
-        console.error(err);
+        // console.error(err);
         await authorize();
     }
 }

@@ -78,15 +78,13 @@ async function listAndReplyToEmails() {
     }
 }
 
-// (async () => {
-//     await loadToken();
-//     await listAndReplyToEmails();
-// })();
-
-// cron job to monitor mails every 5 minutes
-console.log("checking for mails every 5 minutes.");
-cron.schedule('*/5 * * * *', async () => {
-    console.log('Checking for new emails...');
+(async () => {
+    // checking login status
     await loadToken();
-    await listAndReplyToEmails();
-});
+    // cron job to monitor mails every 5 minutes
+    console.log("checking for mails every 5 minutes.");
+    cron.schedule('*/5 * * * *', async () => {
+        console.log('Checking for new emails...');
+        await listAndReplyToEmails();
+    });
+})();
