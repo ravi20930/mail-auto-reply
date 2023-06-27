@@ -1,5 +1,37 @@
+const fs = require('fs');
 const cron = require('node-cron');
 const { loadToken, gmail } = require("./auth");
+
+async function checkFileExists(filePath) {
+    try {
+        await fs.promises.access(filePath);
+        return true; // File exists
+    } catch (error) {
+        return false; // File does not exist
+    }
+}
+
+// Create the custom label if it doesn't exist
+async function createLabelIfNotExists() {
+    const res = await gmail.users.labels.list({ userId: 'me' });
+    const labels = res.data.labels;
+    // console.log(labels);
+    const labelExists = labels.some((label) => label.name === 'AUTO_REPLIED_MAILS');
+
+    if (!labelExists) {
+        const d = await gmail.users.labels.create({
+            userId: 'me',
+            requestBody: {
+                name: 'AUTO_REPLIED_MAILS',
+                labelListVisibility: 'labelShow',
+                messageListVisibility: 'show',
+            },
+        });
+        console.log(d.data.id);
+        fs.writeFileSync('label', JSON.stringify({"name":"AUTO_REPLIED_MAILS", "id":d.data.id}));
+        console.log(`Label created.`);
+    }
+}
 
 async function replyToEmail(emailId, subject, body) {
     try {
@@ -23,11 +55,12 @@ async function replyToEmail(emailId, subject, body) {
                 threadId: emailId,
             },
         });
+        const {id} = JSON.parse(fs.readFileSync('label'));
         await gmail.users.messages.modify({
             userId: 'me',
             id: emailId,
             requestBody: {
-                addLabelIds: ['INBOX'],
+                addLabelIds: ['INBOX', id],
                 removeLabelIds: ['UNREAD'],
             },
         });
@@ -81,9 +114,15 @@ async function listAndReplyToEmails() {
 (async () => {
     // checking login status
     await loadToken();
+    // checking for label configuration locally
+    const checkLabel = await checkFileExists("label");
+    if (!checkLabel) {
+        console.log("checking for label...");
+        await createLabelIfNotExists();
+    }
     // cron job to monitor mails every 5 minutes
     console.log("checking for mails every 5 minutes.");
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule('*/1 * * * *', async () => {
         console.log('Checking for new emails...');
         await listAndReplyToEmails();
     });
